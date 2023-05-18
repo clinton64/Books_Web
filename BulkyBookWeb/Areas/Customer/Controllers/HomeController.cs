@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Customer.Controllers
 {
     public class HomeController : Controller
     {
@@ -20,7 +20,7 @@ namespace BulkyBookWeb.Controllers
 
         public IActionResult Privacy()
         {
-            TempData["success"] ="privacy page is loaded";
+            TempData["success"] = "privacy page is loaded";
             return View();
         }
 
