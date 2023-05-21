@@ -26,6 +26,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Views\CoverType\" />
+    <Folder Include="wwwroot\Images\Product\" />
   </ItemGroup>
 
 </Project>
