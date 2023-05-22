@@ -47,7 +47,7 @@ public class ProductController : Controller
         {
             //update
         }
-        return View();
+        return View(productVM);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
