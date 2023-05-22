@@ -57,19 +57,37 @@ public class ProductController : Controller
         if (ModelState.IsValid)
         {
             string wwwRootPath = _webHostEnvironment.WebRootPath;
-            if(file != null)
+            if (file != null)
             {
                 string fileName = Guid.NewGuid().ToString();
                 var uploads = Path.Combine(wwwRootPath, @"Images\Product");
                 var extension = Path.GetExtension(file.FileName);
 
-                using(var fileStream = new FileStream(Path.Combine(uploads, file + extension), FileMode.Create))
+                if (obj.Product.ImageURL != null)
                 {
-                    file.CopyTo(fileStream); 
+                    var oldImagePath = Path.Combine(wwwRootPath, obj.Product.ImageURL.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                using (var fileStream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
                 }
                 obj.Product.ImageURL = @"\Images\Product\" + fileName + extension;
+
+
             }
-            _unitOfWork.Product.Add(obj.Product);
+            if(obj.Product.Id == 0)
+            {
+                _unitOfWork.Product.Add(obj.Product);
+            }
+            else
+            {
+                _unitOfWork.Product.Update(obj.Product);
+            } 
             _unitOfWork.Save();
             TempData["success"] = "Product Created Successfully";
             return RedirectToAction("Index");
