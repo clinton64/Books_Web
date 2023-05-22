@@ -21,6 +21,7 @@ public class ProductController : Controller
     {
         return View();
     }
+    //Get
     public IActionResult Upsert(int? id)
     {
         ProductVM productVM = new()
@@ -45,9 +46,9 @@ public class ProductController : Controller
         }
         else
         {
-            //update
+            productVM.Product = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            return View(productVM);
         }
-        return View(productVM);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
