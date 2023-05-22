@@ -1,4 +1,5 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
+using BulkyBook.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace BulkyBook.DataAccess.Repository
         public Repository(ApplicationDbContext db)
         {
             _context = db;
+            //db.Products.Include(u => u.CoverType).Include(u => u.Category);
             dbSet = _context.Set<T>();
         }
 
@@ -24,16 +26,30 @@ namespace BulkyBook.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll()
+        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties)
         {
             IQueryable<T> query = dbSet;
+            if(includeProperties != null)
+            {
+                foreach(var property in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
             return query.ToList();
         }
 
-        T IRepository<T> .GetFirstOrDefault(Expression<Func<T, bool>> filter)
+        T IRepository<T> .GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
             return query.FirstOrDefault();
         }
         void IRepository<T>.Remove(T entity)
