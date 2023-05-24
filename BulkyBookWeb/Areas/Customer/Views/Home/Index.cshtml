@@ -25,9 +25,7 @@
                         </div>
                     </div>
                     <div>
-                        <a asp-action="Details" class="btn btn-primary form-control" asp-route-id="@product.Id">
-                            Details
-                        </a>
+                        <a class="btn btn-success form-control" asp-action="Details" asp-route-id="@product.Id">Details</a>
                     </div>
                 </div>
             </div>
@@ -54,4 +52,13 @@
         align-items: center;
         justify-content: center;
     }
+
+    /* Add hover effect to Details button */
+    .details-button {
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .details-button:hover {
+            background-color: #998888;
+        }
 </style>
