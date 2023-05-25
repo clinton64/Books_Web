@@ -18,7 +18,7 @@ namespace BulkyBook.DataAccess.Repository
 
         public void Update(Company company)
         {
-            throw new NotImplementedException();
+            _context.Companys.Update(company);
         }
     }
 }
