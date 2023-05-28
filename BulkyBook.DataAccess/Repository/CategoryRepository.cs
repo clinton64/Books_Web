@@ -5,7 +5,7 @@ namespace BulkyBook.DataAccess.Repository
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         public CategoryRepository(ApplicationDbContext db) : base(db)
         {
             _context = db;
