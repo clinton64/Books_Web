@@ -15,5 +15,6 @@ namespace BulkyBook.DataAccess
         public DbSet<Product> Products { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { set;get; }
         public DbSet<Company> Companys { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set;}
     }
 }
