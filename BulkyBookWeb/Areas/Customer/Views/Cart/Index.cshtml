@@ -32,16 +32,16 @@
                             </div>
                             <div class="col-6 col-sm-4 col-lg-6 pt-2">
                                 <div class="w-75 btn-group" role="group">
-                                    <a class="col btn btn-outline-secondary">
+                                    <a asp-action="Plus" asp-route-cartId="@item.Id" class="col btn btn-outline-secondary">
                                         <i class="bi bi-plus-circle-fill"></i>
                                     </a>
-                                    <a class="col btn btn-outline-secondary">
+                                    <a asp-action="Minus" asp-route-cartId="@item.Id" class="col btn btn-outline-secondary">
                                         <i class="bi bi-dash-circle-fill"></i>
                                     </a>
                                 </div>
-                                <div class="col btn btn-outline-danger">
+                                <a asp-action="Remove" asp-route-cartId="@item.Id" class="col btn btn-outline-danger">
                                     <i class="bi bi-trash"></i>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between bg-light">
                                 <span class="text-info">Total (USD)</span>
-                                <span class="text-info">$$$</span>
+                                <span class="text-info"> @Model.CartTotal.ToString("c") </span>
                             </li>
                         </ul>
                     </div>

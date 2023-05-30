@@ -9,5 +9,6 @@ namespace BulkyBook.Models.ViewModel
     public class ShoppingCartVM
     {
         public IEnumerable<ShoppingCart> CartList;
+        public double CartTotal;
     }
 }

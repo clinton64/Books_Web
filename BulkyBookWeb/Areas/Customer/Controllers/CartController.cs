@@ -32,9 +32,32 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             {
                 cart.Price = GetPriceBasedOnCount(cart.Count, cart.Product.ListPrice,
                     cart.Product.Price50, cart.Product.Price100);
+                ShoppingCartVM.CartTotal += (cart.Price * cart.Count);
             }
 
             return View(ShoppingCartVM);
+        }
+
+        public IActionResult Plus(int cartId)
+        {
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+            _unitOfWork.ShoppingCart.IncrementCount(cart, 1);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Minus(int cartId)
+        {
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+            _unitOfWork.ShoppingCart.DecrementCount(cart, 1);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Remove(int cartId) 
+        {
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id==cartId);
+            _unitOfWork.ShoppingCart.Remove(cart);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
         }
         private double GetPriceBasedOnCount(int count, double listPrice, int price50, int price100)
         {
