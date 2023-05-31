@@ -45,6 +45,14 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
+        public IActionResult Summary(int cartId)
+        {
+            //var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+            //_unitOfWork.ShoppingCart.IncrementCount(cart, 1);
+            //_unitOfWork.Save();
+            //return RedirectToAction(nameof(Index));
+            return View();
+        }
         public IActionResult Minus(int cartId)
         {
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);

@@ -1,0 +1,159 @@
+﻿<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-6">
+                    <strong>Order Summary</strong>
+                </div>
+                <div class="col-6 text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Back To Cart</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class=col-6 p-3">
+                    <h5 class="text-info">Pickup Details</h5>
+                    <div class="row">
+                        <div class="col">
+                            <label>Name</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Phone Number</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Street Address</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>City</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Name</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Zip Code</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Email</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Carrier</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Tracking Id</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Shipping Date</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                            <label>Payment Status</label>
+                        </div>
+                        <div class="col">
+                            <input />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-6">
+                    <h5 class="text-info">Order Summary</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item text-bg-light text-center">
+                            Order Status - Shipped
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row">
+                                        <strong>Title</strong>
+                                    </div>
+                                    <div class="row text-muted">
+                                        Price : 
+                                    </div>
+                                    <div class="row text-muted">
+                                        Count : 
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="text-center">
+                                        $$$
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item text-bg-info">
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Total(USD)</strong>
+                                </div>
+                                <div class="col text-center">
+                                    $$$
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <a class="btn btn-outline-secondary"> Pay Now </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-6 text-info">
+                    Estimated Arrival Time : @DateTime.Today.Date.ToString()
+                </div>
+                <div class="col-6 text-end">
+                    <a class="btn btn-outline-primary">Place Order</a>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
