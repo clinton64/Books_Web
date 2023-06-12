@@ -4,6 +4,7 @@ using BulkyBook.Models.ViewModel;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
@@ -118,12 +119,58 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 _unitOfWork.OrderDetails.Add(detail);
                 _unitOfWork.Save();
             }
-            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.CartList);
+            // stripe settings
+            var domain = "https://localhost:7192/";
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                },
+                LineItems = new List<SessionLineItemOptions>(),
+               
+                Mode = "payment",
+                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                CancelUrl = domain + $"customer/cart/index",
+            };
+            foreach (var item in ShoppingCartVM.CartList) {
+				var sessionLineItem = new SessionLineItemOptions
+				{
+					PriceData = new SessionLineItemPriceDataOptions
+					{
+						UnitAmount = (long)(item.Price*100),
+						Currency = "usd",
+						ProductData = new SessionLineItemPriceDataProductDataOptions
+						{
+							Name = item.Product.Title,
+						},
+					},
+					Quantity = item.Count,
+				};
+                options.LineItems.Add(sessionLineItem); 
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+            Response.Headers.Add("Location", session.Url);
+            _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
             _unitOfWork.Save();
-            return View(ShoppingCartVM);
-            
+            return new StatusCodeResult(303);
+
+            //_unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.CartList);
+            //_unitOfWork.Save();
+            //return View(ShoppingCartVM);
+
         }
-        public IActionResult Minus(int cartId)
+    
+        public IActionResult OrderConfirmation(int id)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+            return View();
+        }
+
+
+		public IActionResult Minus(int cartId)
         {
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.DecrementCount(cart, 1);

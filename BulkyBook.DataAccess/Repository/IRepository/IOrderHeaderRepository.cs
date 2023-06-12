@@ -1,9 +1,4 @@
 ﻿using BulkyBook.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BulkyBook.DataAccess.Repository.IRepository
 {
@@ -11,5 +6,6 @@ namespace BulkyBook.DataAccess.Repository.IRepository
     {
         void Update(OrderHeader obj);
         void UpdateStatus(int id, string OrderStatus, string? paymentStatus);
+        void UpdateStripePaymentId(int id,string sessionId , string stripePaymentId);
     }
 }
