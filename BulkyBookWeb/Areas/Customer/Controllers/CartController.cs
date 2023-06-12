@@ -156,18 +156,25 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
             _unitOfWork.Save();
             return new StatusCodeResult(303);
-
-            //_unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.CartList);
-            //_unitOfWork.Save();
-            //return View(ShoppingCartVM);
-
         }
     
         public IActionResult OrderConfirmation(int id)
         {
             OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
-            return View();
-        }
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId);
+            // check the stripe status
+            if(session.PaymentStatus == "paid")
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
+                _unitOfWork.Save();
+            }
+            // Clear Shopping Cart
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			_unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+			_unitOfWork.Save();
+			return View(id);
+		}
 
 
 		public IActionResult Minus(int cartId)
