@@ -6,6 +6,7 @@ using BulkyBook.DataAccess;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BulkyBook.Utility;
 using Stripe;
+using BulkyBook.DataAccess.DBInitializer;
 
 var builder = WebApplication.CreateBuilder(args); 
 
@@ -20,6 +21,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProvid
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IEmailSender, EmaiSender>(); 
+builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.ConfigureApplicationCookie(options =>
@@ -43,8 +45,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
-app.UseAuthentication(); ;
 
+SeedDB();
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
@@ -52,3 +55,12 @@ app.MapControllerRoute(
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedDB()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dBInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+        dBInitializer.initialize();
+    }
+}
