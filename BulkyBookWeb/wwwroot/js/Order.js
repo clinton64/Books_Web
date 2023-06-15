@@ -10,7 +10,8 @@ function loadDataTable() {
         },
         "columns": [
             { "data": "id", "width": "5%" },
-            { "data": "name", "width": "25%" },
+            { "data": "name", "width": "15%" },
+            { "data": "applicationUser.email", "width": "15%"},
             { "data": "phoneNumber", "width": "15%" },
             { "data": "orderStatus", "width": "15%" },
             { "data": "orderTotal", "width": "5%" },
@@ -25,7 +26,7 @@ function loadDataTable() {
                         </div>
                     `
                 },
-                "width": "15%"
+                "width": "10%"
             },
         ]
     })
