@@ -13,7 +13,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private IUnitOfWork _unitOfWork;
-        private OrderVM _orderVM;
+        [BindProperty]
+        public OrderVM _orderVM { get; set; }
         public OrderController(IUnitOfWork unitOfWork) 
         {
             _unitOfWork = unitOfWork;
@@ -32,7 +33,29 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             };
             return View(_orderVM);
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateOrderDetails()
+        {
+            var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == _orderVM.OrderHeader.Id); 
+            orderHeaderFromDb.Name = _orderVM.OrderHeader.Name; 
+            orderHeaderFromDb.PhoneNumber = _orderVM.OrderHeader.PhoneNumber;
+            orderHeaderFromDb.StreetAddress = _orderVM.OrderHeader.StreetAddress;
+            orderHeaderFromDb.City = _orderVM.OrderHeader.City;
+            orderHeaderFromDb.PostalCode = _orderVM.OrderHeader.PostalCode;
+            orderHeaderFromDb.State = _orderVM.OrderHeader.State;
+            if(_orderVM.OrderHeader.Carrier != null)
+            {
+                orderHeaderFromDb.Carrier = _orderVM.OrderHeader.Carrier;
+            }
+            if(_orderVM.OrderHeader.PaymentIntentId != null)
+            {
+                orderHeaderFromDb.TrackingNumber = _orderVM.OrderHeader.TrackingNumber;
+            }
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Details Updated Successfully.";
+            return RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id});
+        }
 
         #region API 
         [HttpGet]
