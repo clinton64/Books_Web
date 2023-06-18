@@ -57,8 +57,35 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id});
         }
 
-        #region API 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult StartProcessing()
+        {
+            _unitOfWork.OrderHeader.UpdateStatus(_orderVM.OrderHeader.Id, SD.StatusInProgress);
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Status Updated Successfully";
+            return RedirectToAction("Details", "Order", new {orderId =_orderVM.OrderHeader.Id});
+        }
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult ShipOrder()
+		{
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == _orderVM.OrderHeader.Id, tracked: false);
+            orderHeader.TrackingNumber = _orderVM.OrderHeader.TrackingNumber;
+            orderHeader.Carrier = _orderVM.OrderHeader.Carrier;
+            orderHeader.OrderStatus = SD.StatusShipped;
+            orderHeader.ShippingDate = DateTime.Now;
+
+            _unitOfWork.OrderHeader.Update(orderHeader);
+            _unitOfWork.Save();
+			TempData["Success"] = "Order Shipped Successfully";
+			return RedirectToAction("Details", "Order", new { orderId = _orderVM.OrderHeader.Id });
+		}
+
+
+		#region API 
+		[HttpGet]
         public IActionResult GetAll(string status) 
         {
             IEnumerable<OrderHeader> orderHeaders;
