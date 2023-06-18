@@ -1,5 +1,6 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModel;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private IUnitOfWork _unitOfWork;
+        private OrderVM _orderVM;
         public OrderController(IUnitOfWork unitOfWork) 
         {
             _unitOfWork = unitOfWork;
@@ -19,6 +21,16 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details(int orderId)
+        {
+            _orderVM = new OrderVM
+            {
+                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetails = _unitOfWork.OrderDetails.GetAll(u => u.OrderId == orderId, includeProperties: "Product")
+            };
+            return View(_orderVM);
         }
 
 

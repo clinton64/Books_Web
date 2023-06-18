@@ -39,6 +39,7 @@ namespace BulkyBook.DataAccess.Repository
 			var obj = _context.OrderHeaders.FirstOrDefault(x => x.Id == id);
 			if (obj != null)
 			{
+                obj.PaymentDate = DateTime.Now;
 				obj.SessionId = sessionId;
 				obj.PaymentIntentId = paymentIntentId;
 			}
