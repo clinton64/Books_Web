@@ -1,12 +1,25 @@
 ﻿var dataTable;
 $(document).ready(function () {
-    loadDataTable();
+    var url = window.location.search
+    if (url.includes("pending")) {
+        loadDataTable("pending");
+    }
+    else if (url.includes("inprocess")) {
+        loadDataTable("inprocess")
+    }
+    else if (url.includes("completed")) {
+        loadDataTable("completed")
+    }
+    else {
+        loadDataTable("")
+    }
+    
 });
 
-function loadDataTable() {
+function loadDataTable(status) {
     dataTable = $('#tblData').DataTable({
         "ajax": {
-            "url": "/Admin/Order/GetAll"
+            "url": "/Admin/Order/GetAll/?status="+status
         },
         "columns": [
             { "data": "id", "width": "5%" },

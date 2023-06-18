@@ -1,11 +1,18 @@
-﻿@{
-    ViewData["Title"] = "Index";
-}
-
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
+﻿<div class="pt-3">
+    <div class="d-flex justify-content-between pt-4">
+        <div class="pt-2">
             <h2 class="text-primary">Order List</h2>
+        </div>
+        <div class="pt2">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: black"> <h5>Order Status</h5> </a>
+                <div class="dropdown-menu">
+                    <a class="nav-link" asp-controller="Order" asp-action="Index" asp-route-status="all"> All </a>
+                    <a class="nav-link" asp-controller="Order" asp-action="Index" asp-route-status="inprocess"> In Process </a>
+                    <a class="nav-link" asp-controller="Order" asp-action="Index" asp-route-staus="pending"> Payment Pending </a>
+                    <a class="nav-link" asp-controller="Order" asp-action="Index" asp-route-status="completed"> Completed </a>
+                </div>
+            </div>
         </div>
     </div>
     <br /><br />
