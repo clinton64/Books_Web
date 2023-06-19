@@ -4,6 +4,7 @@ using BulkyBook.Models.ViewModel;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
@@ -35,6 +36,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public IActionResult UpdateOrderDetails()
         {
             var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == _orderVM.OrderHeader.Id); 
@@ -59,6 +61,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public IActionResult StartProcessing()
         {
             _unitOfWork.OrderHeader.UpdateStatus(_orderVM.OrderHeader.Id, SD.StatusInProgress);
@@ -69,6 +72,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 		public IActionResult ShipOrder()
 		{
             var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == _orderVM.OrderHeader.Id, tracked: false);
@@ -76,6 +80,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             orderHeader.Carrier = _orderVM.OrderHeader.Carrier;
             orderHeader.OrderStatus = SD.StatusShipped;
             orderHeader.ShippingDate = DateTime.Now;
+            if(orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
+            {
+                orderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
+            }
 
             _unitOfWork.OrderHeader.Update(orderHeader);
             _unitOfWork.Save();
@@ -83,9 +91,35 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 			return RedirectToAction("Details", "Order", new { orderId = _orderVM.OrderHeader.Id });
 		}
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult CancelOrder()
+        {
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == _orderVM.OrderHeader.Id, tracked: false);
+            if(orderHeader.PaymentStatus == SD.PaymentStatusApproved) 
+            {
+                // refund
+                var option = new RefundCreateOptions
+                {
+                    Reason = RefundReasons.RequestedByCustomer,
+                    PaymentIntent = orderHeader.PaymentIntentId
+                };
+                var service = new RefundService();
+                Refund refund = service.Create(option);
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
+            }
+            else
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+            }
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Cancelled Successfully";
+            return RedirectToAction("Details", "Order", new { orderId = _orderVM.OrderHeader.Id });
+        }
 
-		#region API 
-		[HttpGet]
+        #region API 
+        [HttpGet]
         public IActionResult GetAll(string status) 
         {
             IEnumerable<OrderHeader> orderHeaders;
@@ -103,13 +137,13 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             switch (status)
             {
                 case "inprocess":
-                    orderHeaders = orderHeaders.Where(u => u.PaymentStatus == SD.StatusInProgress);
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusInProgress);
                     break;
                 case "pending":
-                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.PaymentStatusPending);
+                    orderHeaders = orderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusDelayedPayment);
                     break;
                 case "completed":
-                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.PaymentStatusApproved);
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);
                     break;
                 default:
                     break;

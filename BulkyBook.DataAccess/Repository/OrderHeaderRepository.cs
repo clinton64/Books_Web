@@ -21,7 +21,7 @@ namespace BulkyBook.DataAccess.Repository
             _context.OrderHeaders.Update(orderHeader);
         }
 
-        public void UpdateStatus(int id, string orderStatus, string? paymentStatus)
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
         {
             var obj = _context.OrderHeaders.FirstOrDefault(x => x.Id == id);
             if (obj != null)
