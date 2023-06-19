@@ -4,6 +4,7 @@ using BulkyBook.Models.ViewModel;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using Stripe.Checkout;
 using System.Security.Claims;
 
@@ -165,9 +166,9 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 }
                 var service = new SessionService();
                 Session session = service.Create(options);
-                Response.Headers.Add("Location", session.Url);
                 _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
                 _unitOfWork.Save();
+                Response.Headers.Add("Location", session.Url);
                 return new StatusCodeResult(303);
             }
             else
@@ -187,6 +188,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 if (session.PaymentStatus == "paid")
                 {
                     _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
                     _unitOfWork.Save();
                 }
             }
