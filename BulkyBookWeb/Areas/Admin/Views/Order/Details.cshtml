@@ -4,12 +4,14 @@
     <input asp-for="OrderHeader.Id" hidden/>
     <div class="backgroundwhite container">
         <div class="card">
-            <div class="card-header bg-dark text-light ml-0 row container">
-                <div class="col-12 d-none d-md-block col-md-6 pb-1">
-                    Order Summary
-                </div>
-                <div class="col-12 col-md-4 offset-md-2 text-right">
-                    <a asp-action="Index" class="btn btn-outline-info form-control btn-sm"> Back To Orders</a>
+            <div class="card-header bg-dark text-light ml-0">
+                <div class="container row">
+                    <div class="col-12 d-none d-md-block col-md-6 pb-1">
+                        Order Summary
+                    </div>
+                    <div class="col-12 col-md-4 offset-md-2 text-right">
+                        <a asp-action="Index" class="btn btn-outline-info form-control btn-sm"> Back To Orders</a>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
